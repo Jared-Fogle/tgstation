@@ -31,18 +31,22 @@
 	new/obj/structure/fluff/empty_terrarium(get_turf(src))
 	return ..()
 
-//Ash walker eggs: Spawns in ash walker dens in lavaland. Ghosts become unbreathing lizards that worship the Necropolis and are advised to retrieve corpses to create more ash walkers.
+// Ash walker eggs and frost moth cocoons
 
-/obj/structure/ash_walker_eggshell
-	name = "ash walker egg"
-	desc = "A man-sized yellow egg, spawned from some unfathomable creature. A humanoid silhouette lurks within. The egg shell looks resistant to temperature but otherwise rather brittle."
-	icon = 'icons/mob/lavaland/lavaland_monsters.dmi'
-	icon_state = "large_egg"
+/// A mob spawner for a living thing
+/// Explodes into gibs when destroyed, gross!
+/obj/structure/living_mob_spawner
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | FREEZE_PROOF
 	max_integrity = 80
-	var/obj/effect/mob_spawn/human/ash_walker/egg
 
-/obj/structure/ash_walker_eggshell/play_attack_sound(damage_amount, damage_type = BRUTE, damage_flag = 0) //lifted from xeno eggs
+	/// The spawner for this object that is used when a ghost clicks on it
+	var/obj/effect/mob_spawn/spawner
+	/// The type of the species this spawner creates when gibbing
+	var/species
+	/// The type of the outfit this spawner creates when gibbing
+	var/outfit
+
+/obj/structure/living_mob_spawner/play_attack_sound(damage_amount, damage_type, damage_flag)
 	switch(damage_type)
 		if(BRUTE)
 			if(damage_amount)
@@ -53,24 +57,41 @@
 			if(damage_amount)
 				playsound(loc, 'sound/items/welder.ogg', 100, TRUE)
 
-/obj/structure/ash_walker_eggshell/attack_ghost(mob/user) //Pass on ghost clicks to the mob spawner
-	if(egg)
-		egg.attack_ghost(user)
+// Pass on ghost clicks to the mob spawner
+/obj/structure/living_mob_spawner/attack_ghost(mob/user)
+	if(spawner)
+		spawner.attack_ghost(user)
 	. = ..()
 
-/obj/structure/ash_walker_eggshell/Destroy()
-	if(!egg)
+/obj/structure/living_mob_spawner/Destroy()
+	if(!spawner)
 		return ..()
-	var/mob/living/carbon/human/yolk = new /mob/living/carbon/human/(get_turf(src))
-	yolk.fully_replace_character_name(null,random_unique_lizard_name(gender))
-	yolk.set_species(/datum/species/lizard/ashwalker)
+	var/mob/living/carbon/human/yolk = new /mob/living/carbon/human(get_turf(src))
+	yolk.fully_replace_character_name(null, random_name(gender))
+	yolk.set_species(species)
 	yolk.underwear = "Nude"
-	yolk.equipOutfit(/datum/outfit/ashwalker)//this is an authentic mess we're making
+	yolk.equipOutfit(outfit) // this is an authentic mess we're making
 	yolk.update_body()
 	yolk.gib()
-	qdel(egg)
+	qdel(spawner)
 	return ..()
 
+/// Returns the name of the body that is about to be gibbed
+/obj/structure/living_mob_spawner/proc/random_name(gender)
+	return "D. Bugg"
+
+// Ash walkers
+/obj/structure/living_mob_spawner/ash_walker_eggshell
+	name = "ash walker egg"
+	desc = "A man-sized yellow egg, spawned from some unfathomable creature. A humanoid silhouette lurks within. The egg shell looks resistant to temperature but otherwise rather brittle."
+	icon = 'icons/mob/lavaland/lavaland_monsters.dmi'
+	icon_state = "large_egg"
+
+	species = /datum/species/lizard/ashwalker
+	outfit = /datum/outfit/ashwalker
+
+/obj/structure/living_mob_spawner/ash_walker_eggshell/random_name(gender)
+	return random_unique_lizard_name(gender)
 
 /obj/effect/mob_spawn/human/ash_walker
 	name = "ash walker egg"
@@ -90,7 +111,7 @@
 	Fresh sacrifices for your nest."
 	assignedrole = "Ash Walker"
 	var/datum/team/ashwalkers/team
-	var/obj/structure/ash_walker_eggshell/eggshell
+	var/obj/structure/living_mob_spawner/ash_walker_eggshell/eggshell
 
 /obj/effect/mob_spawn/human/ash_walker/allow_spawn(mob/user)
 	if(!(user.key in team.players_spawned))//one per person unless you get a bonus spawn
@@ -99,7 +120,7 @@
 	return FALSE
 
 /obj/effect/mob_spawn/human/ash_walker/special(mob/living/new_spawn)
-	new_spawn.fully_replace_character_name(null,random_unique_lizard_name(gender))
+	new_spawn.fully_replace_character_name(null,random_unique_lizard_name(new_spawn.gender))
 	to_chat(new_spawn, "<b>Drag the corpses of men and beasts to your nest. It will absorb them to create more of your kind. Invade the strange structure of the outsiders if you must. Do not cause unnecessary destruction, as littering the wastes with ugly wreckage is certain to not gain you favor. Glory to the Necropolis!</b>")
 
 	new_spawn.mind.add_antag_datum(/datum/antagonist/ashwalker, team)
@@ -110,15 +131,15 @@
 		H.update_body()
 		ADD_TRAIT(H, TRAIT_PRIMITIVE, ROUNDSTART_TRAIT)
 	team.players_spawned += (new_spawn.key)
-	eggshell.egg = null
+	eggshell.spawner = null
 	qdel(eggshell)
 
 /obj/effect/mob_spawn/human/ash_walker/Initialize(mapload, datum/team/ashwalkers/ashteam)
 	. = ..()
 	var/area/A = get_area(src)
 	team = ashteam
-	eggshell = new /obj/structure/ash_walker_eggshell(get_turf(loc))
-	eggshell.egg = src
+	eggshell = new /obj/structure/living_mob_spawner/ash_walker_eggshell(get_turf(loc))
+	eggshell.spawner = src
 	src.forceMove(eggshell)
 	if(A)
 		notify_ghosts("An ash walker egg is ready to hatch in \the [A.name].", source = src, action=NOTIFY_ATTACK, flashwindow = FALSE, ignore_key = POLL_IGNORE_ASHWALKER)
@@ -128,6 +149,88 @@
 	head = /obj/item/clothing/head/helmet/gladiator
 	uniform = /obj/item/clothing/under/costume/gladiator/ash_walker
 
+// Frost moths
+/obj/structure/living_mob_spawner/frost_moth_cocoon
+	name = "frost moth cocoon"
+	desc = "A silky cocoon that looks like it has a silhouette inside. It looks resistant to temperature but is otherwise rather brittle."
+	// TODO
+	icon = 'icons/obj/plushes.dmi'
+	icon_state = "moffplush"
+
+	species = /datum/species/moth/frost_moth
+	outfit = /datum/outfit/frost_moth
+
+/obj/structure/living_mob_spawner/frost_moth_cocoon/random_name(gender)
+	return random_unique_moth_name()
+
+/obj/effect/mob_spawn/human/frost_moth
+	name = "frost moth cocoon"
+	desc = "A silky cocoon that looks like it has a silhouette inside. It looks resistant to temperature but is otherwise rather brittle."
+	mob_name = "a frost moth"
+	// TODO
+	icon = 'icons/obj/plushes.dmi'
+	icon_state = "moffplush"
+	mob_species = /datum/species/moth/frost_moth
+	outfit = /datum/outfit/frost_moth
+	roundstart = FALSE
+	death = FALSE
+	density = FALSE
+	short_desc = "You are a frost moth. You need to find food and build a shelter in order to survive."
+	flavour_text = "TODO: Flavor text"
+	assignedrole = "Frost Moth"
+	var/datum/team/frost_moths/team
+	var/obj/structure/living_mob_spawner/frost_moth_cocoon/cocoon
+
+/obj/effect/mob_spawn/human/frost_moth/allow_spawn(mob/user)
+	if(!(user.key in team.players_spawned))
+		return TRUE
+	to_chat(user, "<span class='warning'><b>You have exhausted your usefulness to the group.</b></span>")
+	return FALSE
+
+/obj/effect/mob_spawn/human/frost_moth/special(mob/living/new_spawn)
+	new_spawn.fully_replace_character_name(null, random_unique_moth_name())
+	to_chat(new_spawn, "<b>Collect clothes, tools, ore, and whatever else you can find nearby and off the bodies of the once living. Build shelter in order to survive the brutal weather. Find outsiders who may have things of value to you in exchange for your findings. Do not cause unnecessary destruction, but do only what you must to survive.</b>")
+	new_spawn.mind.add_antag_datum(/datum/antagonist/frost_moth)
+
+	if (ishuman(new_spawn))
+		var/mob/living/carbon/human/H = new_spawn
+		H.underwear = "Nude"
+		H.dna.features["moth_markings"] = pick(GLOB.moth_markings_list)
+		H.dna.features["moth_wings"] = pick(GLOB.moth_wings_list - "Burnt Off")
+		H.update_body()
+
+	team.players_spawned += new_spawn.key
+	cocoon.spawner = null
+	qdel(cocoon.spawner)
+
+/obj/effect/mob_spawn/human/frost_moth/Initialize(mapload, datum/team/frost_moths/moth_team)
+	. = ..()
+	var/area/A = get_area(src)
+	team = moth_team
+	cocoon = new(get_turf(loc))
+	cocoon.spawner = src
+	forceMove(cocoon)
+	if (A)
+		notify_ghosts("A frost moth cocoon is ready to hatch in \the [A.name].", source = src, action = NOTIFY_ATTACK, flashwindow = FALSE, ignore_key = POLL_IGNORE_FROST_MOTH)
+
+/datum/outfit/frost_moth
+	name = "Frost Moth"
+	suit = /obj/item/clothing/suit/hooded/wintercoat
+	suit_store = /obj/item/flashlight/lantern/heirloom_moth
+
+/datum/outfit/frost_moth/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	..()
+
+	if (visualsOnly)
+		return
+
+	if (istype(H.wear_suit, /obj/item/clothing/suit/hooded))
+		var/obj/item/clothing/suit/hooded/S = H.wear_suit
+		S.ToggleHood()
+
+	if (istype(H.s_store, /obj/item/flashlight))
+		var/obj/item/flashlight/F = H.s_store
+		F.attack_self(H)
 
 //Timeless prisons: Spawns in Wish Granter prisons in lavaland. Ghosts become age-old users of the Wish Granter and are advised to seek repentance for their past.
 /obj/effect/mob_spawn/human/exile

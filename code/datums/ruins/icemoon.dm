@@ -115,3 +115,9 @@
 	Seem very intent on research and individual liberty, and also geology-based naming?"
 	prefix = "_maps/RandomRuins/AnywhereRuins/"
 	suffix = "golem_ship.dmm"
+
+/datum/map_template/ruin/icemoon/underground/frost_moths
+	name = "Frost Moths"
+	id = "frostmoths"
+	description = "A group of nomadic frost moths are using this for now."
+	suffix = "icemoon_underground_frost_moths.dmm"

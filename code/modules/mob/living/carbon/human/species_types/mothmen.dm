@@ -71,3 +71,11 @@
 		var/datum/gas_mixture/current = H.loc.return_air()
 		if(current && (current.return_pressure() >= ONE_ATMOSPHERE*0.85)) //as long as there's reasonable pressure and no gravity, flight is possible
 			return TRUE
+
+/// Moth subspecies: Frost moths
+/datum/species/moth/frost_moth
+	name = "Frost Moth"
+	id = "frostmoth"
+	limbs_id = "moth"
+	inherent_traits = list(TRAIT_CHUNKYFINGERS, TRAIT_NOBREATH, TRAIT_PRIMITIVE)
+	species_language_holder = /datum/language_holder/frost_moth

@@ -1,0 +1,31 @@
+"a" = (/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
+"c" = (/turf/closed/mineral/random/snow,/area/mine/explored)
+"o" = (/obj/item/areaeditor/blueprints,/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
+"p" = (/obj/item/spear,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
+"t" = (/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
+"y" = (/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
+"J" = (/obj/structure/icemoon/frost_moth,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
+"K" = (/turf/closed/mineral/random/snow,/area/ruin/unpowered/frost_moths)
+"N" = (/obj/structure/ore_box,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
+"Y" = (/obj/item/spear,/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
+
+(1,1,1) = {"
+acccaaaaaaaaaaaaaa
+aaaaaaaacaaaaaaaaa
+aacccaaccaaaacccaa
+cacaaaccaaaaaaacca
+aacaaaaaaaaaaaaaaa
+aaaaapaKKKKKKKacca
+aaaaaaaKttttyKaaca
+aaaaaaaKttKtKKaaac
+acccaJatttKtKKaaaa
+aaaccaaKKtKYtKaaaa
+aaaaaaapKottKKaaca
+accaaNaaKKKtKaaaca
+aacaaaaaaaKtaaaaca
+aaccacaaaaaaaaaaaa
+aaccaaaaaaacccaaaa
+aaaaaaccacaaaaaaaa
+aaaaaaacaaaaaacaaa
+aaaaaaaaaaaaaccaaa
+"}
