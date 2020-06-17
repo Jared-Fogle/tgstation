@@ -390,7 +390,7 @@
 		if(ishuman(M))
 			var/mob/living/carbon/human/H = M
 			people_on_station++
-			for(var/clothing in list(H.head, H.wear_mask, H.wear_suit, H.w_uniform, H.back, H.gloves, H.shoes, H.belt, H.s_store, H.glasses, H.ears, H.wear_id))
+			for(var/clothing in H.get_clothing_slots())
 				if(is_type_in_list(clothing, acceptable_clothes))
 					people_reppin_tunnel_snakes++
 	if(0.25*people_on_station > people_reppin_tunnel_snakes)

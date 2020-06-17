@@ -59,6 +59,23 @@
 		w_uniform
 		)
 
+/// Gets the clothing the human has on. Doesn't check pockets.
+/mob/living/carbon/human/proc/get_clothing_slots()
+	return list(
+		head,
+		wear_mask,
+		wear_suit,
+		w_uniform,
+		back,
+		gloves,
+		shoes,
+		belt,
+		s_store,
+		glasses,
+		ears,
+		wear_id
+	)
+
 /mob/living/carbon/human/proc/get_head_slots()
 	return list(
 		head,
