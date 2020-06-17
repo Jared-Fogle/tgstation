@@ -2896,6 +2896,7 @@
 #include "code\modules\ruins\lavalandruin_code\syndicate_base.dm"
 #include "code\modules\ruins\objects_and_mobs\ash_walker_den.dm"
 #include "code\modules\ruins\objects_and_mobs\frost_moth_den.dm"
+#include "code\modules\ruins\objects_and_mobs\ice_moon_corpses.dm"
 #include "code\modules\ruins\objects_and_mobs\necropolis_gate.dm"
 #include "code\modules\ruins\objects_and_mobs\sin_ruins.dm"
 #include "code\modules\ruins\spaceruin_code\asteroid4.dm"

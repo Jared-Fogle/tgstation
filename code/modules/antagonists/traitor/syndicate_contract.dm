@@ -48,7 +48,7 @@
 /datum/syndicate_contract/proc/handle_extraction(var/mob/living/user)
 	if (contract.target && contract.dropoff_check(user, contract.target.current))
 
-		var/turf/free_location = find_obstruction_free_location(3, user, contract.dropoff)
+		var/turf/free_location = pick(get_obstruction_free_locations(3, user, contract.dropoff))
 
 		if (free_location)
 			// We've got a valid location, launch.

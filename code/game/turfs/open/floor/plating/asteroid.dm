@@ -231,6 +231,33 @@ GLOBAL_LIST_INIT(megafauna_spawn_list, list(/mob/living/simple_animal/hostile/me
 	choose_turf_type = null
 	pick_tunnel_width = list("1" = 1, "2" = 2, "3" = 1)
 
+#define CORPSE_SUMMON_RANGE 11 // A bit outside the aggro range
+
+/turf/open/floor/plating/asteroid/airless/cave/snow/underground/SpawnMonster(turf/T)
+	. = ..()
+
+	// If we summoned a mob, summon a corpse
+	if (.)
+		// Try to summon the corpse as far away as possible
+		var/list/unobstructed_spots = get_obstruction_free_locations(CORPSE_SUMMON_RANGE, T)
+		var/farthest_away = 0
+		var/turfs_far_away
+
+		for (var/spot in unobstructed_spots)
+			var/dist = get_dist(spot, T)
+			if (dist > farthest_away)
+				farthest_away = dist
+				turfs_far_away = list(spot)
+			else if (dist == farthest_away)
+				turfs_far_away += spot
+
+		// TODO: Better corpses near spawners of multiple hostiles?
+		var/obj/effect/mob_spawn/human/corpse/icemoon/C = pick(subtypesof(/obj/effect/mob_spawn/human/corpse/icemoon))
+		new C(pick(turfs_far_away))
+
+#undef CORPSE_SUMMON_CHANCE
+#undef CORPSE_SUMMON_RANGE
+
 /turf/open/floor/plating/asteroid/airless/cave/snow/has_data //subtype for producing a tunnel with given data
 	has_data = TRUE
 

@@ -213,7 +213,7 @@
 	arrival_pod.explosionSize = list(0,0,0,1)
 	arrival_pod.bluespace = TRUE
 
-	var/turf/free_location = find_obstruction_free_location(2, user)
+	var/turf/free_location = pick(get_obstruction_free_locations(2, user))
 
 	// We really want to send them - if we can't find a nice location just land it on top of them.
 	if (!free_location)

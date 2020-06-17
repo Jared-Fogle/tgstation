@@ -546,10 +546,10 @@
 	)
 	return (is_type_in_list(item, pire_wire))
 
-// Find an obstruction free turf that's within the range of the center. Can also condition on if it is of a certain area type.
-/proc/find_obstruction_free_location(range, atom/center, area/specific_area)
+/// Returns a list of unobstructed free turfs within the range of the center. Can also condition on if it is of a certain area type.
+/proc/get_obstruction_free_locations(range, atom/center, atom/specific_area)
 	var/list/turfs = RANGE_TURFS(range, center)
-	var/list/possible_loc = list()
+	var/list/possible_locs = list()
 
 	for(var/turf/found_turf in turfs)
 		var/area/turf_area = get_area(found_turf)
@@ -562,13 +562,9 @@
 
 		if (!isspaceturf(found_turf))
 			if (!is_blocked_turf(found_turf))
-				possible_loc.Add(found_turf)
+				possible_locs.Add(found_turf)
 
-	// Need at least one free location.
-	if (possible_loc.len < 1)
-		return FALSE
-
-	return pick(possible_loc)
+	return possible_locs
 
 /proc/power_fail(duration_min, duration_max)
 	for(var/P in GLOB.apcs_list)
