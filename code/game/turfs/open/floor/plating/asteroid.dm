@@ -194,6 +194,9 @@ GLOBAL_LIST_INIT(megafauna_spawn_list, list(/mob/living/simple_animal/hostile/me
 /turf/open/floor/plating/asteroid/airless/cave/volcanic/has_data //subtype for producing a tunnel with given data
 	has_data = TRUE
 
+#define CORPSE_SUMMON_CHANCE 60
+#define CORPSE_SUMMON_RANGE 11 // A bit outside the aggro range
+
 /turf/open/floor/plating/asteroid/airless/cave/snow
 	gender = PLURAL
 	name = "snow"
@@ -222,26 +225,16 @@ GLOBAL_LIST_INIT(megafauna_spawn_list, list(/mob/living/simple_animal/hostile/me
 	choose_turf_type = list(/turf/open/floor/plating/asteroid/snow/icemoon = 19, /turf/open/floor/plating/ice/icemoon = 1)
 	pick_tunnel_width = list("1" = 2, "2" = 1)
 
-/turf/open/floor/plating/asteroid/airless/cave/snow/underground
-	mob_spawn_list = list(/mob/living/simple_animal/hostile/asteroid/ice_demon = 50, /obj/structure/spawner/ice_moon/demonic_portal = 3, \
-						  /mob/living/simple_animal/hostile/asteroid/ice_whelp = 30, /obj/structure/spawner/ice_moon/demonic_portal/ice_whelp = 3, \
-						  /mob/living/simple_animal/hostile/asteroid/hivelord/legion/snow = 50, /obj/structure/spawner/ice_moon/demonic_portal/snowlegion = 3)
-	flora_spawn_list = list(/obj/structure/flora/rock/icy = 6, /obj/structure/flora/rock/pile/icy = 6)
-	data_having_type = /turf/open/floor/plating/asteroid/airless/cave/snow/underground/has_data
-	choose_turf_type = null
-	pick_tunnel_width = list("1" = 1, "2" = 2, "3" = 1)
-
-#define CORPSE_SUMMON_RANGE 11 // A bit outside the aggro range
-
-/turf/open/floor/plating/asteroid/airless/cave/snow/underground/SpawnMonster(turf/T)
+// TODO: Only do this if not on the station z-level
+/turf/open/floor/plating/asteroid/airless/cave/snow/SpawnMonster(turf/T)
 	. = ..()
 
 	// If we summoned a mob, summon a corpse
-	if (.)
+	if (. && prob(CORPSE_SUMMON_CHANCE))
 		// Try to summon the corpse as far away as possible
 		var/list/unobstructed_spots = get_obstruction_free_locations(CORPSE_SUMMON_RANGE, T)
 		var/farthest_away = 0
-		var/turfs_far_away
+		var/list/turfs_far_away
 
 		for (var/spot in unobstructed_spots)
 			var/dist = get_dist(spot, T)
@@ -252,8 +245,17 @@ GLOBAL_LIST_INIT(megafauna_spawn_list, list(/mob/living/simple_animal/hostile/me
 				turfs_far_away += spot
 
 		// TODO: Better corpses near spawners of multiple hostiles?
-		var/obj/effect/mob_spawn/human/corpse/icemoon/C = pick(subtypesof(/obj/effect/mob_spawn/human/corpse/icemoon))
+		var/C = pickweight(GLOB.ice_moon_corpses)
 		new C(pick(turfs_far_away))
+
+/turf/open/floor/plating/asteroid/airless/cave/snow/underground
+	mob_spawn_list = list(/mob/living/simple_animal/hostile/asteroid/ice_demon = 50, /obj/structure/spawner/ice_moon/demonic_portal = 3, \
+						  /mob/living/simple_animal/hostile/asteroid/ice_whelp = 30, /obj/structure/spawner/ice_moon/demonic_portal/ice_whelp = 3, \
+						  /mob/living/simple_animal/hostile/asteroid/hivelord/legion/snow = 50, /obj/structure/spawner/ice_moon/demonic_portal/snowlegion = 3)
+	flora_spawn_list = list(/obj/structure/flora/rock/icy = 6, /obj/structure/flora/rock/pile/icy = 6)
+	data_having_type = /turf/open/floor/plating/asteroid/airless/cave/snow/underground/has_data
+	choose_turf_type = null
+	pick_tunnel_width = list("1" = 1, "2" = 2, "3" = 1)
 
 #undef CORPSE_SUMMON_CHANCE
 #undef CORPSE_SUMMON_RANGE
