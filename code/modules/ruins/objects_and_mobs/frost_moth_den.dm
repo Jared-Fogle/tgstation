@@ -1,5 +1,6 @@
 #define CLOTH_PER_COCOON 3
 #define FROST_MOTHS_TO_SUMMON 3
+#define FROST_MOTH_RESPAWN_TIME (20 SECONDS)
 
 /// The frost moth loom. Handles summoning more frost moths and respawning.
 /obj/structure/icemoon/frost_moth
@@ -44,16 +45,27 @@
 	for (var/thing in get_turf(src))
 		if (istype(thing, /mob/living/carbon/human))
 			var/mob/living/carbon/human/H = thing
-			if (H.stat != CONSCIOUS && !H.mind?.has_antag_datum(/datum/antagonist/frost_moth))
+			if (H.stat != CONSCIOUS)
 				consumed_someone = TRUE
 				consumed_something = TRUE
+
+				var/moth_sacrificed = H.mind?.has_antag_datum(/datum/antagonist/frost_moth) && (H.key || H.get_ghost(FALSE, TRUE))
+				if (moth_sacrificed)
+					visible_message("<span class='warning'>\The [src] takes the body of [H], and tries to reconstruct [p_them(H)].</span>")
+					var/mob/moth_soul = H.key ? H : H.get_ghost(FALSE, TRUE)
+					to_chat(moth_soul, "Your body has returned to the loom, and you will return shortly. </br><b>Your memories will remain intact in your new body, as your soul is being salvaged</b>")
+					SEND_SOUND(moth_soul, sound('sound/magic/enter_blood.ogg', volume = 100))
+					addtimer(CALLBACK(src, .proc/respawn_moth, H.mind, H.real_name), FROST_MOTH_RESPAWN_TIME)
+
 				for (var/obj/item/I in H.get_clothing_slots())
-					if (istype(I, /obj/item/clothing))
+					// Throw away clothes from sacrificed moths so clicking on the loom more than once doesn't trash the clothes
+					if (istype(I, /obj/item/clothing) && !moth_sacrificed)
 						qdel(I)
 						consumed_cloth += 1
 					else
 						I.forceMove(loc)
 						I.throw_at(pick(oview(3)), rand(1, 3), 2)
+
 				H.gib()
 		else if (istype(thing, /obj/item/clothing))
 			qdel(thing)
@@ -118,5 +130,20 @@
 	new /obj/effect/mob_spawn/human/frost_moth(get_step(loc, dir), team)
 	visible_message("<span class='danger'>One of the cocoons starts to rattle aggressively. It's ready to hatch!</span>")
 
+/obj/structure/icemoon/frost_moth/proc/respawn_moth(datum/mind/old_mind, old_name)
+	var/mob/living/carbon/human/M = new /mob/living/carbon/human(get_step(loc, pick(GLOB.alldirs)))
+	M.set_species(/datum/species/moth/frost_moth)
+	M.real_name = old_name
+	M.underwear = "Nude"
+	M.update_body()
+	old_mind.transfer_to(M)
+	M.mind.grab_ghost()
+	to_chat(M, "<b>You have returned from death, ready to serve alongside your tribe once more.</b>")
+	playsound(get_turf(M), 'sound/magic/exit_blood.ogg', 100, TRUE)
+
+/obj/screen/alert/notify_action/frost_moth_revive
+
+
 #undef CLOTH_PER_COCOON
 #undef FROST_MOTHS_TO_SUMMON
+#undef FROST_MOTH_RESPAWN_TIME
