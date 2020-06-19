@@ -1,4 +1,3 @@
-#define CLOTH_PER_COCOON 6
 #define FROST_MOTHS_TO_SUMMON 3
 #define FROST_MOTH_RESPAWN_TIME (20 SECONDS)
 
@@ -30,7 +29,6 @@
 	if (istype(I, /obj/item/clothing))
 		qdel(I)
 		consumed_cloth += 1
-		cloth_consumed()
 	else
 		return ..()
 
@@ -39,6 +37,40 @@
 	if (.)
 		return
 
+	// TODO: Maybe force consume if there's something on it?
+	var/list/choices = list()
+	choices["Consume"] = image(icon = 'icons/effects/fire.dmi', icon_state = "fire")
+
+	var/list/recipes = list()
+
+	for (var/recipe_type in subtypesof(/datum/frost_moth_loom_recipe))
+		var/datum/frost_moth_loom_recipe/recipe = new recipe_type
+
+		var/additional = ""
+		if (recipe.cloth > consumed_cloth)
+			additional = "style='color: red'"
+
+		var/image/recipe_image = recipe.get_image()
+		recipe_image.maptext = "<span class='maptext' [additional]>[consumed_cloth]/[recipe.cloth]</span>"
+		choices[recipe.name] = recipe_image
+		recipes[recipe.name] = recipe
+
+	var/pick = show_radial_menu(user, src, choices)
+	if (pick == "Consume")
+		consume(user)
+	else
+		var/datum/frost_moth_loom_recipe/recipe = recipes[pick]
+		if (!istype(recipe))
+			return
+
+		if (recipe.cloth > consumed_cloth)
+			to_chat(user, "<span class='warning'>\The [src] only has [consumed_cloth] cloth, but you need [recipe.cloth] to craft this.</span>")
+			return
+
+		consumed_cloth -= recipe.cloth
+		recipe.activate(user, src)
+
+/obj/structure/icemoon/frost_moth/proc/consume(mob/user)
 	var/consumed_someone = FALSE
 	var/consumed_something = FALSE
 
@@ -81,21 +113,9 @@
 	else if (!consumed_something)
 		to_chat(user, "<span class='warning'>\The [src] needs a clothed body to consume.</span>")
 
-	if (consumed_something)
-		cloth_consumed()
-
 /obj/structure/icemoon/frost_moth/proc/spawn_initial_cocoons()
 	for (var/_ in 1 to FROST_MOTHS_TO_SUMMON)
 		spawn_cocoon()
-
-/obj/structure/icemoon/frost_moth/proc/cloth_consumed()
-	// TODO: Visual effect and sound here
-	if (consumed_cloth >= CLOTH_PER_COCOON)
-		var/plural = consumed_cloth >= CLOTH_PER_COCOON * 2
-		visible_message("[plural ? "A cocoon" : "Several cocoons"] appear[plural ? "" : "s"], seemingly out of thin air!")
-		while (consumed_cloth >= CLOTH_PER_COCOON)
-			consumed_cloth -= CLOTH_PER_COCOON
-			spawn_cocoon()
 
 /obj/structure/icemoon/frost_moth/proc/spawn_cocoon()
 	// Try to spawn the egg in a place we haven't put it in
@@ -141,9 +161,45 @@
 	to_chat(M, "<b>You have returned from death, ready to serve alongside your tribe once more.</b>")
 	playsound(get_turf(M), 'sound/magic/exit_blood.ogg', 100, TRUE)
 
-/obj/screen/alert/notify_action/frost_moth_revive
+/// A recipe the frost moth's loom can craft
+/datum/frost_moth_loom_recipe
+	/// The amount of cloth needed to craft something
+	var/cloth
+	/// The name of the recipe
+	var/name
+	/// Optionally, a basic atom to provide
+	var/atom/product
 
+/// Callback when the recipe is crafted
+/datum/frost_moth_loom_recipe/proc/activate(mob/user, obj/structure/icemoon/frost_moth/loom)
+	if (product)
+		var/obj/item/I = new product(get_turf(loom))
+		if (istype(I))
+			user.put_in_hands(I)
 
-#undef CLOTH_PER_COCOON
+/// Returns the image to show for the radial menu
+/datum/frost_moth_loom_recipe/proc/get_image()
+	if (product)
+		return image(product)
+
+/// Crafting recipe for a new cocoon
+/datum/frost_moth_loom_recipe/cocoon
+	cloth = 6
+	name = "Cocoon"
+
+/datum/frost_moth_loom_recipe/cocoon/activate(mob/user, obj/structure/icemoon/frost_moth/loom)
+	// TODO: Visual effect and sound
+	loom.visible_message("A cocoon appears, seemingly out of thin air!")
+	loom.spawn_cocoon()
+
+/datum/frost_moth_loom_recipe/cocoon/get_image()
+	return image(icon = 'icons/obj/plushes.dmi', icon_state = "moffplush")
+
+/// Crafting recipe for a new winter coat
+/datum/frost_moth_loom_recipe/coat
+	cloth = 4
+	name = "Coat"
+	product = /obj/item/clothing/suit/hooded/wintercoat
+
 #undef FROST_MOTHS_TO_SUMMON
 #undef FROST_MOTH_RESPAWN_TIME
