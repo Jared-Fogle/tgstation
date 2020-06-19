@@ -66,7 +66,7 @@
 						I.forceMove(loc)
 						I.throw_at(pick(oview(3)), rand(1, 3), 2)
 
-				H.gib()
+				H.dust()
 		else if (istype(thing, /obj/item/clothing))
 			qdel(thing)
 			consumed_cloth += 1
