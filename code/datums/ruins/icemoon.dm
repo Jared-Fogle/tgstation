@@ -121,3 +121,4 @@
 	id = "frostmoths"
 	description = "A group of nomadic frost moths are using this for now."
 	suffix = "icemoon_underground_frost_moths.dmm"
+	required_z_trait = ZTRAIT_SUMMON_FROST_MOTHS

@@ -39,6 +39,7 @@ require only minor tweaks.
 #define ZTRAIT_ICE_RUINS "Ice Ruins"
 #define ZTRAIT_ICE_RUINS_UNDERGROUND "Ice Ruins Underground"
 #define ZTRAIT_ISOLATED_RUINS "Isolated Ruins" //Placing ruins on z levels with this trait will use turf reservation instead of usual placement.
+#define ZTRAIT_SUMMON_FROST_MOTHS "Summon Frost Moths" // Should this z-level be able to summon frost moths? Used so that they don't spawn too low underground.
 
 // boolean - weather types that occur on the level
 #define ZTRAIT_SNOWSTORM "Weather_Snowstorm"

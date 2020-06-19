@@ -103,6 +103,21 @@
 		else //Otherwise just pick random one
 			current_pick = pickweight(ruins_availible)
 
+		// Check if what we picked requires a specific z-trait
+		// If it does, force the z-level to one we can acommodate for it
+		// If we can't find one, skip this pick altogether
+		if (current_pick.required_z_trait)
+			var/list/available_levels = z_levels & SSmapping.levels_by_trait(current_pick.required_z_trait)
+
+			if (available_levels.len)
+				forced_z = pick(available_levels)
+			else
+				// Couldn't find an appropriate z-level, just trash it and try a new one
+				for (var/datum/map_template/ruin/R in ruins_availible)
+					if (R.id == current_pick.id)
+						ruins_availible -= R
+				continue
+
 		var/placement_tries = forced_turf ? 1 : PLACEMENT_TRIES //Only try once if we target specific turf
 		var/failed_to_place = TRUE
 		var/target_z = 0

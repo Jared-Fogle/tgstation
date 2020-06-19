@@ -13,6 +13,7 @@
 	var/allow_duplicates = TRUE
 	var/list/always_spawn_with = null //These ruin types will be spawned along with it (where dependent on the flag) eg list(/datum/map_template/ruin/space/teleporter_space = SPACERUIN_Z)
 	var/list/never_spawn_with = null //If this ruin is spawned these will not eg list(/datum/map_template/ruin/base_alternate)
+	var/list/required_z_trait = null /// Only spawn if the z-level has this z-trait
 
 	var/prefix = null
 	var/suffix = null

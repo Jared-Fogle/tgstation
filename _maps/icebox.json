@@ -32,6 +32,7 @@
          "Linkage":null,
          "Gravity":true,
          "Ice Ruins Underground":true,
+         "Summon Frost Moths":true,
          "Baseturf":"/turf/open/transparent/openspace/icemoon"
       },
       {
