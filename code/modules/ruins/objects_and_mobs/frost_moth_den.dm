@@ -83,7 +83,7 @@
 					var/mob/moth_soul = H.key ? H : H.get_ghost(FALSE, TRUE)
 					to_chat(moth_soul, "Your body has returned to the loom, and you will return shortly. </br><b>Your memories will remain intact in your new body, as your soul is being salvaged</b>")
 					SEND_SOUND(moth_soul, sound('sound/magic/enter_blood.ogg', volume = 100))
-					addtimer(CALLBACK(src, .proc/respawn_moth, H.mind, H.real_name), FROST_MOTH_RESPAWN_TIME)
+					addtimer(CALLBACK(src, .proc/respawn_moth, H.mind, H.real_name, H.nutrition), FROST_MOTH_RESPAWN_TIME)
 
 				for (var/obj/item/I in H.get_clothing_slots())
 					// Throw away clothes from sacrificed moths so clicking on the loom more than once doesn't trash the clothes
@@ -151,9 +151,10 @@
 		consumed_cloth += 1
 		qdel(C)
 
-/obj/structure/icemoon/frost_moth/proc/respawn_moth(datum/mind/old_mind, old_name)
+/obj/structure/icemoon/frost_moth/proc/respawn_moth(datum/mind/old_mind, old_name, old_nutrition)
 	var/mob/living/carbon/human/M = new /mob/living/carbon/human(get_step(loc, pick(GLOB.alldirs)))
 	M.set_species(/datum/species/moth/frost_moth)
+	M.set_nutrition(old_nutrition)
 	M.real_name = old_name
 	M.underwear = "Nude"
 	M.update_body()
