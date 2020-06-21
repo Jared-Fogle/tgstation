@@ -37,10 +37,10 @@
 	if (.)
 		return
 
+	consume(user)
+
 	// TODO: Maybe force consume if there's something on it?
 	var/list/choices = list()
-	choices["Consume"] = image(icon = 'icons/effects/fire.dmi', icon_state = "fire")
-
 	var/list/recipes = list()
 
 	for (var/recipe_type in subtypesof(/datum/frost_moth_loom_recipe))
@@ -56,30 +56,26 @@
 		recipes[recipe.name] = recipe
 
 	var/pick = show_radial_menu(user, src, choices)
-	if (pick == "Consume")
-		consume(user)
-	else
-		var/datum/frost_moth_loom_recipe/recipe = recipes[pick]
-		if (!istype(recipe))
-			return
 
-		if (recipe.cloth > consumed_cloth)
-			to_chat(user, "<span class='warning'>\The [src] only has [consumed_cloth] cloth, but you need [recipe.cloth] to craft this.</span>")
-			return
+	var/datum/frost_moth_loom_recipe/recipe = recipes[pick]
+	if (!istype(recipe))
+		return
 
-		consumed_cloth -= recipe.cloth
-		recipe.activate(user, src)
+	if (recipe.cloth > consumed_cloth)
+		to_chat(user, "<span class='warning'>\The [src] only has [consumed_cloth] cloth, but you need [recipe.cloth] to craft this.</span>")
+		return
+
+	consumed_cloth -= recipe.cloth
+	recipe.activate(user, src)
 
 /obj/structure/icemoon/frost_moth/proc/consume(mob/user)
 	var/consumed_someone = FALSE
-	var/consumed_something = FALSE
 
 	for (var/thing in get_turf(src))
 		if (istype(thing, /mob/living/carbon/human))
 			var/mob/living/carbon/human/H = thing
 			if (H.stat != CONSCIOUS)
 				consumed_someone = TRUE
-				consumed_something = TRUE
 
 				var/moth_sacrificed = H.mind?.has_antag_datum(/datum/antagonist/frost_moth) && (H.key || H.get_ghost(FALSE, TRUE))
 				if (moth_sacrificed)
@@ -102,7 +98,6 @@
 		else if (istype(thing, /obj/item/clothing))
 			qdel(thing)
 			consumed_cloth += 1
-			consumed_something = TRUE
 
 	if (consumed_someone)
 		for (var/mob/living/L in view(src, 5))
@@ -110,8 +105,6 @@
 				SEND_SIGNAL(L, COMSIG_ADD_MOOD_EVENT, "oogabooga", /datum/mood_event/sacrifice_good)
 			else
 				SEND_SIGNAL(L, COMSIG_ADD_MOOD_EVENT, "oogabooga", /datum/mood_event/sacrifice_bad)
-	else if (!consumed_something)
-		to_chat(user, "<span class='warning'>\The [src] needs a clothed body to consume.</span>")
 
 /obj/structure/icemoon/frost_moth/proc/spawn_initial_cocoons()
 	for (var/_ in 1 to FROST_MOTHS_TO_SUMMON)
