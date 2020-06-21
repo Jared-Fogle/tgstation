@@ -21,3 +21,16 @@
 
 /datum/antagonist/frost_moth/get_team()
 	return team
+
+/datum/antagonist/frost_moth/on_gain()
+	RegisterSignal(owner.current, COMSIG_LIVING_EDIBLE_EATEN, .proc/alert_eaten_clothing)
+	..()
+
+/datum/antagonist/frost_moth/on_removal()
+	UnregisterSignal(owner.current, COMSIG_LIVING_EDIBLE_EATEN)
+	..()
+
+/datum/antagonist/frost_moth/proc/alert_eaten_clothing(mob/eater, obj/item/reagent_containers/food/snacks/clothing/food)
+	if (istype(food) && food.original_clothing)
+		if (food.original_clothing.obj_integrity == food.original_clothing.max_integrity)
+			to_chat(eater, "<span class='warning'>As you bite into \the [food], you recognize that this is no longer a worthy offering to the loom.</span>")

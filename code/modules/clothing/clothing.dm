@@ -78,6 +78,7 @@
 	list_reagents = list(/datum/reagent/consumable/nutriment = 1)
 	tastes = list("dust" = 1, "lint" = 1)
 	foodtype = CLOTH
+	var/obj/item/clothing/original_clothing
 
 /obj/item/clothing/attack(mob/M, mob/user, def_zone)
 	if(user.a_intent != INTENT_HARM && ismoth(M))
@@ -85,6 +86,7 @@
 			to_chat(user, "<span class='notice'>[src] seem[p_s()] pretty torn apart... [p_they(TRUE)] probably wouldn't be too tasty.</span>")
 			return
 		var/obj/item/reagent_containers/food/snacks/clothing/clothing_as_food = new
+		clothing_as_food.original_clothing = src
 		clothing_as_food.name = name
 		if(clothing_as_food.attack(M, user, def_zone))
 			take_damage(15, sound_effect=FALSE)

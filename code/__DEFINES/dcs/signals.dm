@@ -339,6 +339,8 @@
 #define COMSIG_LIVING_RESIST "living_resist"
 ///from base of mob/living/IgniteMob() (/mob/living)
 #define COMSIG_LIVING_IGNITED "living_ignite"
+/// sent by /obj/item/reagent_containers/food/snacks/attack and /datum/component/edible/TakeBite. (atom/food)
+#define COMSIG_LIVING_EDIBLE_EATEN "living_edible_eaten"
 ///from base of mob/living/ExtinguishMob() (/mob/living)
 #define COMSIG_LIVING_EXTINGUISHED "living_extinguished"
 ///from base of mob/living/electrocute_act(): (shock_damage, source, siemens_coeff, flags)

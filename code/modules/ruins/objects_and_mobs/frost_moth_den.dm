@@ -88,7 +88,7 @@
 				for (var/obj/item/I in H.get_clothing_slots())
 					// Throw away clothes from sacrificed moths so clicking on the loom more than once doesn't trash the clothes
 					if (istype(I, /obj/item/clothing) && !moth_sacrificed)
-						qdel(I)
+						try_consume_clothing(I)
 						consumed_cloth += 1
 					else
 						I.forceMove(loc)
@@ -96,8 +96,7 @@
 
 				H.dust()
 		else if (istype(thing, /obj/item/clothing))
-			qdel(thing)
-			consumed_cloth += 1
+			try_consume_clothing(thing)
 
 	if (consumed_someone)
 		for (var/mob/living/L in view(src, 5))
@@ -142,6 +141,15 @@
 
 	new /obj/effect/mob_spawn/human/frost_moth(get_step(loc, dir), team)
 	visible_message("<span class='danger'>One of the cocoons starts to rattle aggressively. It's ready to hatch!</span>")
+
+/obj/structure/icemoon/frost_moth/proc/try_consume_clothing(obj/item/clothing/C)
+	// You can't send your half eaten snacks to the gods!
+	if (C.obj_integrity < C.max_integrity)
+		C.throw_at(pick(oview(3)), rand(1, 3), 2)
+		visible_message("<span class='warning'>\The [src] rejects \the damaged [C].</span>")
+	else
+		consumed_cloth += 1
+		qdel(C)
 
 /obj/structure/icemoon/frost_moth/proc/respawn_moth(datum/mind/old_mind, old_name)
 	var/mob/living/carbon/human/M = new /mob/living/carbon/human(get_step(loc, pick(GLOB.alldirs)))

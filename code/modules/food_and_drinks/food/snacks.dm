@@ -144,6 +144,7 @@ All foods are distributed among various categories. Use common sense.
 			playsound(M.loc,'sound/items/eatfood.ogg', rand(10,50), TRUE)
 			if(reagents.total_volume)
 				SEND_SIGNAL(src, COMSIG_FOOD_EATEN, M, user)
+				SEND_SIGNAL(user, COMSIG_LIVING_EDIBLE_EATEN, src)
 				var/fraction = min(bitesize / reagents.total_volume, 1)
 				reagents.trans_to(M, bitesize, transfered_by = user, method = INGEST)
 				bitecount++
