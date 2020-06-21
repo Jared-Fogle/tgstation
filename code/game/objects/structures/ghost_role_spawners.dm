@@ -131,7 +131,8 @@
 		H.update_body()
 		ADD_TRAIT(H, TRAIT_PRIMITIVE, ROUNDSTART_TRAIT)
 	team.players_spawned += (new_spawn.key)
-	QDEL_NULL(eggshell.spawner)
+	eggshell.spawner = null
+	qdel(eggshell)
 
 /obj/effect/mob_spawn/human/ash_walker/Initialize(mapload, datum/team/ashwalkers/ashteam)
 	. = ..()
@@ -199,7 +200,8 @@
 		H.update_body()
 
 	team.players_spawned += new_spawn.key
-	QDEL_NULL(cocoon.spawner)
+	cocoon.spawner = null
+	qdel(cocoon)
 
 /obj/effect/mob_spawn/human/frost_moth/Initialize(mapload, datum/team/frost_moths/moth_team)
 	. = ..()
