@@ -167,6 +167,9 @@
 	. = ..()
 	StartBurning()
 
+/obj/structure/bonfire/prelit/infinite/CheckOxygen()
+	return TRUE
+
 /obj/structure/bonfire/CanAllowThrough(atom/movable/mover, turf/target)
 	. = ..()
 	if(istype(mover) && (mover.pass_flags & PASSTABLE))

@@ -5,10 +5,11 @@
 "s" = (/obj/item/toy/plush/moth,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
 "t" = (/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
 "y" = (/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/obj/item/pickaxe,/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
+"z" = (/obj/structure/sink/ice_fishing_pond,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
 "J" = (/obj/structure/icemoon/frost_moth,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
 "K" = (/turf/closed/mineral/random/snow,/area/ruin/unpowered/frost_moths)
 "N" = (/obj/structure/ore_box,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
-"V" = (/obj/structure/bonfire,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
+"V" = (/obj/structure/bonfire/prelit/infinite,/turf/open/floor/plating/asteroid/snow/ice/icemoon,/area/mine/explored)
 "Y" = (/obj/item/spear,/turf/open/floor/plating/snowed,/area/ruin/unpowered/frost_moths)
 
 (1,1,1) = {"
@@ -18,7 +19,7 @@ aacccaaccaaaacccaa
 cacaaaccaaaaaaacca
 aacaaaaaaaaaaaaaaa
 aaaaapaKKKKKKKacca
-aaaaaaaKttttyKaaca
+aaaaazaKttttyKaaca
 aaaaaaaKttKtKKaaac
 acccaJatttKtKKaaaa
 aaacaaaKKtKYtKaaaa

@@ -672,6 +672,13 @@
 	result = /obj/structure/headpike/bone
 	category = CAT_PRIMAL
 
+/datum/crafting_recipe/fishingrod
+	name = "Fishing Rod"
+	reqs = list(/obj/item/stack/sheet/sinew = 1,
+		/obj/item/stack/rods = 1)
+	result = /obj/item/fishing_rod
+	category = CAT_PRIMAL
+
 /datum/crafting_recipe/pressureplate
 	name = "Pressure Plate"
 	result = /obj/item/pressure_plate
