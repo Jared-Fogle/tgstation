@@ -76,6 +76,10 @@
 		FISH_DEFINE(/mob/living/simple_animal/crab, FISH_RATE_COMMON, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/storage/cans, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/fish/clownfish, FISH_RATE_COMMON, FISH_RATE_IMPOSSIBLE),
+		FISH_DEFINE(/obj/item/fish/eel, FISH_RATE_RARE, FISH_RATE_UNCOMMON),
+		FISH_DEFINE(/obj/item/fish/goldfish, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
+		FISH_DEFINE(/obj/item/fish/nurse_shark, FISH_RATE_RARE, FISH_RATE_UNCOMMON),
+		FISH_DEFINE(/obj/item/melee/sabre/swordfish, FISH_RATE_RARE, FISH_RATE_UNCOMMON),
 		FISH_DEFINE(CALLBACK(src, .proc/spawn_ore), FISH_RATE_UNCOMMON, FISH_RATE_UNCOMMON)
 	)
 
@@ -220,6 +224,44 @@
 /obj/item/fish/goldfish/Initialize()
 	. = ..()
 	butcher_results = list(/obj/item/stack/ore/gold = 5)
+
+/// Nurse shark - Butchered for medical supplies
+/// When hooked up to an IV drip, can be drained of omnizine
+/obj/item/fish/nurse_shark
+	name = "nurse shark"
+	desc = "This shark used to be terrifying, but now it's dead. Named after the fact that its blood has over time been mixed with healing chemicals."
+	w_class = WEIGHT_CLASS_GIGANTIC
+
+	/// Weighted list of how many items to spawn when butchering
+	var/static/list/butcher_amount_chances = list(
+		2 = 4,
+		3 = 2,
+		4 = 1,
+	)
+
+	/// Weighted list of the possible results when butchering
+	var/static/list/butcher_item_chances = list(
+		/obj/item/stack/medical/suture = 3,
+		/obj/item/stack/medical/mesh = 3,
+		/obj/item/stack/medical/gauze = 3,
+		/obj/item/stack/medical/bone_gel = 2,
+		/obj/item/stack/medical/aloe = 2,
+		/obj/item/healthanalyzer = 1
+	)
+
+/obj/item/fish/nurse_shark/Initialize()
+	. = ..()
+
+	butcher_results = list()
+	for (var/_ in 1 to pickweight(butcher_amount_chances))
+		var/item = pickweight(butcher_item_chances)
+		butcher_results[item] = (butcher_results[item] || 0) + 1
+
+/// Swordfish - Reskin of the officer's sabre
+/obj/item/melee/sabre/swordfish
+	// TODO: Custom inhand sprite too
+	name = "swordfish"
+	desc = "A fish with a long, sharp snout. Capable of cutting through flesh and bone with ease."
 
 #undef FISH_DEFINE
 #undef FISH_RATE_IMPOSSIBLE
