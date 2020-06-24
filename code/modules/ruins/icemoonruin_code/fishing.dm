@@ -226,18 +226,11 @@
 	butcher_results = list(/obj/item/stack/ore/gold = 5)
 
 /// Nurse shark - Butchered for medical supplies
-/// When hooked up to an IV drip, can be drained of omnizine
+/// Can be extracted for blood mixed with omnizine
 /obj/item/fish/nurse_shark
 	name = "nurse shark"
 	desc = "This shark used to be terrifying, but now it's dead. Named after the fact that its blood has over time been mixed with healing chemicals."
 	w_class = WEIGHT_CLASS_GIGANTIC
-
-	/// Weighted list of how many items to spawn when butchering
-	var/static/list/butcher_amount_chances = list(
-		2 = 4,
-		3 = 2,
-		4 = 1,
-	)
 
 	/// Weighted list of the possible results when butchering
 	var/static/list/butcher_item_chances = list(
@@ -253,9 +246,23 @@
 	. = ..()
 
 	butcher_results = list()
-	for (var/_ in 1 to pickweight(butcher_amount_chances))
+	var/num_loot
+
+	switch(rand(1, 7))
+		if (1)
+			num_loot = 4
+		if (2 to 3)
+			num_loot = 3
+		else
+			num_loot = 2
+
+	for (var/_ in 1 to num_loot)
 		var/item = pickweight(butcher_item_chances)
 		butcher_results[item] = (butcher_results[item] || 0) + 1
+
+	create_reagents(300, DRAWABLE)
+	reagents.add_reagent(/datum/reagent/blood, 150)
+	reagents.add_reagent(/datum/reagent/medicine/omnizine, 150)
 
 /// Swordfish - Reskin of the officer's sabre
 /obj/item/melee/sabre/swordfish
