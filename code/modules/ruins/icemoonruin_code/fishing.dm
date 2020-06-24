@@ -1,5 +1,7 @@
 #define FISH_DEFINE(fish_type, with_rod, without_rod) list("type" = fish_type, "chance_with_rod" = with_rod, "chance_without_rod" = without_rod)
 #define FISH_RATE_IMPOSSIBLE 0
+#define FISH_RATE_RARE 1
+#define FISH_RATE_UNCOMMON 2
 #define FISH_RATE_COMMON 3
 #define TIME_TO_FISH (7 SECONDS)
 
@@ -15,13 +17,16 @@
 
 	var/obj/item/bait
 
-/obj/item/fishing_rod/proc/update_bait()
+/obj/item/fishing_rod/examine(mob/user)
+	. = ..()
+	if (bait != null)
+		. += "<span class='notice'>It has [bait] attached</span>"
+
+/obj/item/fishing_rod/update_icon_state()
 	// TODO: Icon state
 	if (bait == null)
-		desc = initial(desc)
 		maptext = ""
 	else
-		desc = "[initial(desc)]\n<span class='notice'>It has [bait] attached</span>"
 		maptext = "<span class='maptext'>bait</span>"
 
 /obj/item/fishing_rod/attackby(obj/item/W, mob/user)
@@ -37,7 +42,7 @@
 		user.put_in_hands(bait)
 
 	bait = W
-	update_bait()
+	update_icon_state()
 
 	return ..()
 
@@ -45,7 +50,11 @@
 	if (bait)
 		user.put_in_hands(bait)
 		bait = null
-		update_bait()
+		update_icon_state()
+
+/obj/item/fishing_rod/suicide_act(mob/user)
+	user.visible_message("<span class='suicide'>[user] attempts to catch fish by casting \the [src] into their own throat! It looks like [user.p_theyre()] trying to commit suicide!</span>")
+	return BRUTELOSS
 
 /obj/structure/sink/ice_fishing_pond
 	name = "pond"
@@ -55,8 +64,19 @@
 	resistance_flags = FREEZE_PROOF | UNACIDABLE
 	density = TRUE
 
-	var/static/list/fish = list(
-		FISH_DEFINE(/mob/living/simple_animal/crab, FISH_RATE_COMMON, FISH_RATE_COMMON)
+	/// A list of fish that can spawn from the pond
+	/// Elements are in the format of list("type" = atom/callback, "chance_with_rod" = number, "chance_without_rod" = number)
+	var/list/fish
+
+/obj/structure/sink/ice_fishing_pond/Initialize()
+	. = ..()
+
+	// FISH_DEFINE(item, chance_with_rod, chance_without_rod)
+	fish = list(
+		FISH_DEFINE(/mob/living/simple_animal/crab, FISH_RATE_COMMON, FISH_RATE_COMMON),
+		FISH_DEFINE(/obj/item/storage/cans, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
+		FISH_DEFINE(/obj/item/fish/clownfish, FISH_RATE_COMMON, FISH_RATE_IMPOSSIBLE),
+		FISH_DEFINE(CALLBACK(src, .proc/spawn_ore), FISH_RATE_UNCOMMON, FISH_RATE_UNCOMMON)
 	)
 
 /obj/structure/sink/ice_fishing_pond/attackby(obj/item/O, mob/living/user)
@@ -79,12 +99,16 @@
 
 		// TODO: Sound
 		var/fish_type = pickweight(weighted)
-		var/caught_fish = new fish_type(get_turf(user))
-		user.visible_message("<span class='notice'>[user] caught \a [caught_fish]!", \
-			"<span class='notice'>You caught \a [caught_fish]!</span>")
+		var/datum/callback/fish_callback = fish_type
+		if (istype(fish_callback))
+			fish_callback.Invoke(user)
+		else
+			var/caught_fish = new fish_type(get_turf(user))
+			user.visible_message("<span class='notice'>[user] caught \a [caught_fish]!", \
+				"<span class='notice'>You caught \a [caught_fish]!</span>")
 
 		QDEL_NULL(fishing_rod.bait)
-		fishing_rod.update_bait()
+		fishing_rod.update_icon_state()
 		return
 
 	return ..()
@@ -92,7 +116,114 @@
 /obj/structure/sink/ice_fishing_pond/proc/bait_consistent(obj/item/fishing_rod/fishing_rod, bait)
 	return fishing_rod.bait == bait
 
+/obj/structure/sink/ice_fishing_pond/proc/spawn_ore(mob/user)
+	for(var/type in GLOB.ore_probability)
+		var/chance = GLOB.ore_probability[type]
+		if(!prob(chance))
+			continue
+		var/obj/ore = new type(loc, rand(2, 3))
+		user.visible_message("<span class='notice'>[user] caught some [ore.name]!</span>", \
+			"<span class='notice'>You caught some [ore.name]!</span>")
+
+/// Fish that can be received from the ice fishing pond
+/// If adding a new one, it needs to be added to the pool (heh) of items in /obj/structure/sink/ice_fishing_pond/Initialize()
+/obj/item/fish
+	icon = 'icons/mob/icemoon/fish.dmi'
+	w_class = WEIGHT_CLASS_SMALL
+	// TODO: Replace with custom fish meat
+	var/list/butcher_results
+
+/obj/item/fish/suicide_act(mob/user)
+	user.visible_message("<span class='suicide'>[user] feels so much remorse for the dead [src] that they start suffocating in solidarity! It looks like [user.p_theyre()] trying to commit suicide!</span>")
+	return OXYLOSS
+
+/obj/item/fish/Initialize()
+	. = ..()
+	butcher_results = list(/obj/item/reagent_containers/food/snacks/meat/rawcrab = 1)
+
+	// TODO: Remove once sprites are added
+	if (icon_state == null)
+		maptext = "<span class='maptext'>[initial(name)]</span>"
+
+/obj/item/fish/attackby(obj/item/I, mob/living/user, params)
+	var/datum/component/butchering/butchering = I.GetComponent(/datum/component/butchering)
+	if (!istype(butchering))
+		return ..()
+
+	playsound(get_turf(user), butchering.butcher_sound, 50, TRUE, -1)
+	to_chat(user, "<span class='notice'>You begin to butcher \the [src]...</span>")
+	if (!do_after(user, butchering.speed, target = src))
+		return
+
+	user.visible_message("<span class='notice'>[user] butchers \the [src].</span>", \
+		"<span class='notice'>You butcher \the [src].</span>")
+
+	var/turf/T = get_turf(src)
+
+	for (var/produce in butcher_results)
+		for (var/i in 1 to butcher_results[produce])
+			new produce(T)
+
+	new /obj/effect/gibspawner/generic(T)
+	qdel(src)
+
+/// Clownfish - Effectively the same as a bikehorn
+/obj/item/fish/clownfish
+	name = "clownfish"
+	desc = "A fish with clown paint dried onto its face."
+
+/obj/item/fish/clownfish/Initialize()
+	. = ..()
+	butcher_results[/obj/item/bikehorn] = 1
+
+/obj/item/fish/clownfish/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/squeak, list('sound/items/bikehorn.ogg'=1), 50)
+
+/// Electric eels - Acts as an inducer and can be used for the shock step in revival surgery
+// TODO: Sprite for both when it has charge and when it doesn't
+/obj/item/fish/eel
+	name = "electric eel"
+	desc = "A slippery snake-like fish."
+	var/obj/item/inducer/eel/inducer
+
+/obj/item/fish/eel/examine(mob/user)
+	. = ..()
+
+	switch (inducer.cell.charge / inducer.cell.maxcharge)
+		if (0)
+			. += "<span class='notice'>It doesn't have the same spark it used to.</span>"
+		if (0.5 to 1)
+			. += "<span class='notice'>It looks like it's charged.</span>"
+		if (0.2 to 0.5)
+			. += "<span class='notice'>It looks like it's charged, but it's fading.</span>"
+		else
+			. += "<span class='notice'>It looks like it has a little bit of charge left.</span>"
+
+/obj/item/fish/eel/Initialize()
+	. = ..()
+	inducer = new
+
+/obj/item/fish/eel/attack_obj(obj/O, mob/living/user)
+	if (!inducer.recharge(O, user))
+		..()
+
+/obj/item/inducer/eel/induce(obj/item/stock_parts/cell/target, coefficient, mob/living/user)
+	..()
+	user.electrocute_act(10, src)
+
+/// Goldfish - Can be butchered for gold ore
+/obj/item/fish/goldfish
+	name = "goldfish"
+	desc = "A fish commonly kept as pets. You can hear what sounds like coins jingling when you hold it."
+
+/obj/item/fish/goldfish/Initialize()
+	. = ..()
+	butcher_results = list(/obj/item/stack/ore/gold = 5)
+
 #undef FISH_DEFINE
 #undef FISH_RATE_IMPOSSIBLE
+#undef FISH_RATE_RARE
+#undef FISH_RATE_UNCOMMON
 #undef FISH_RATE_COMMON
 #undef TIME_TO_FISH

@@ -18,7 +18,7 @@
 	if(!cell && cell_type)
 		cell = new cell_type
 
-/obj/item/inducer/proc/induce(obj/item/stock_parts/cell/target, coefficient)
+/obj/item/inducer/proc/induce(obj/item/stock_parts/cell/target, coefficient, mob/user)
 	var/totransfer = min(cell.charge,(powertransfer * coefficient))
 	var/transferred = target.give(totransfer)
 	cell.use(transferred)
@@ -122,7 +122,7 @@
 		while(C.charge < C.maxcharge)
 			if(do_after(user, 10, target = user) && cell.charge)
 				done_any = TRUE
-				induce(C, coefficient)
+				induce(C, coefficient, user)
 				do_sparks(1, FALSE, A)
 				if(O)
 					O.update_icon()
