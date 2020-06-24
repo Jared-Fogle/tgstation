@@ -92,7 +92,7 @@
 
 				for (var/obj/item/I in H.get_clothing_slots())
 					// Throw away clothes from sacrificed moths so clicking on the loom more than once doesn't trash the clothes
-					if (is_type_in_typecache(thing, acceptable_offerings) && !moth_sacrificed)
+					if (is_type_in_typecache(I, acceptable_offerings) && !moth_sacrificed)
 						try_consume_clothing(I)
 						consumed_cloth += 1
 					else
@@ -155,7 +155,7 @@
 	else
 		if (istype(C, /obj/item/fish/cottonfish))
 			var/obj/item/fish/cottonfish/fish = C
-			consumed_cloth += C.cloth_reward
+			consumed_cloth += fish.cloth_reward
 		else
 			consumed_cloth += 1
 
