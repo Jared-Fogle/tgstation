@@ -75,6 +75,7 @@
 	fish = list(
 		FISH_DEFINE(/mob/living/simple_animal/crab, FISH_RATE_COMMON, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/storage/cans, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
+		FISH_DEFINE(/obj/item/fish/anglerfish, FISH_RATE_IMPOSSIBLE, FISH_RATE_RARE),
 		FISH_DEFINE(/obj/item/fish/clownfish, FISH_RATE_COMMON, FISH_RATE_IMPOSSIBLE),
 		FISH_DEFINE(/obj/item/fish/eel, FISH_RATE_RARE, FISH_RATE_UNCOMMON),
 		FISH_DEFINE(/obj/item/fish/goldfish, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
@@ -170,6 +171,15 @@
 
 	new /obj/effect/gibspawner/generic(T)
 	qdel(src)
+
+/// Anglerfish - Emits light without needing power
+/obj/item/fish/anglerfish
+	name = "anglerfish"
+	desc = "Also known as an anglerfish, these fish lure prey with a fleshy lobe that emits light."
+
+/obj/item/fish/anglerfish/Initialize()
+	. = ..()
+	set_light(6, 1, LIGHT_COLOR_BLUE)
 
 /// Clownfish - Effectively the same as a bikehorn
 /obj/item/fish/clownfish
