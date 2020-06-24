@@ -76,7 +76,9 @@
 		FISH_DEFINE(/mob/living/simple_animal/crab, FISH_RATE_COMMON, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/storage/cans, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/fish/anglerfish, FISH_RATE_IMPOSSIBLE, FISH_RATE_RARE),
+		FISH_DEFINE(/obj/item/fish/breadfish, FISH_RATE_UNCOMMON, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/fish/clownfish, FISH_RATE_COMMON, FISH_RATE_IMPOSSIBLE),
+		FISH_DEFINE(/obj/item/fish/cottonfish, FISH_RATE_UNCOMMON, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/fish/eel, FISH_RATE_RARE, FISH_RATE_UNCOMMON),
 		FISH_DEFINE(/obj/item/fish/goldfish, FISH_RATE_IMPOSSIBLE, FISH_RATE_COMMON),
 		FISH_DEFINE(/obj/item/fish/nurse_shark, FISH_RATE_RARE, FISH_RATE_UNCOMMON),
@@ -181,6 +183,17 @@
 	. = ..()
 	set_light(6, 1, LIGHT_COLOR_BLUE)
 
+/// Breadfish - Provides wheat to tame alpaca
+/obj/item/fish/breadfish
+	name = "breadfish"
+	desc = "A fish that miraculously possesses bread for a torso. An awe for frost moths and nurse sharks."
+
+/obj/item/fish/breadfish/Initialize()
+	. = ..()
+	butcher_results = list(
+		/obj/item/reagent_containers/food/snacks/grown/wheat = 3
+	)
+
 /// Clownfish - Effectively the same as a bikehorn
 /obj/item/fish/clownfish
 	name = "clownfish"
@@ -193,6 +206,19 @@
 /obj/item/fish/clownfish/ComponentInitialize()
 	. = ..()
 	AddComponent(/datum/component/squeak, list('sound/items/bikehorn.ogg'=1), 50)
+
+/// Cottonfish - Can be offered for cloth at the loom
+/obj/item/fish/cottonfish
+	name = "cottonfish"
+	desc = "A fish that looks more like a plushie than as something organic."
+
+	/// How much cloth to give at the loom
+	var/cloth_reward = 3
+
+/obj/item/fish/cottonfish/examine(mob/user)
+	. = ..()
+	if (user.mind.has_antag_datum(/datum/antagonist/frost_moth))
+		. += "<span class='notice'>It feels like a fit offering at your loom.</span>"
 
 /// Electric eels - Acts as an inducer and can be used for the shock step in revival surgery
 // TODO: Sprite for both when it has charge and when it doesn't
