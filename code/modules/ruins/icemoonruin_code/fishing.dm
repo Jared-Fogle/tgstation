@@ -68,6 +68,9 @@
 	/// Elements are in the format of list("type" = atom/callback, "chance_with_rod" = number, "chance_without_rod" = number)
 	var/list/fish
 
+	/// Who is currently fishing here?
+	var/fishing
+
 /obj/structure/sink/ice_fishing_pond/Initialize()
 	. = ..()
 
@@ -87,6 +90,10 @@
 	)
 
 /obj/structure/sink/ice_fishing_pond/attackby(obj/item/O, mob/living/user)
+	if (fishing)
+		to_chat(user, "<span class='warning'>[fishing == user ? 'You' : '[fishing]'] is already fishing here.</span>")
+		return
+
 	var/obj/item/fishing_rod/fishing_rod = O
 	if (istype(fishing_rod))
 		var/bait = fishing_rod.bait
@@ -94,7 +101,11 @@
 		user.visible_message("<span class='notice'>[user] casts \the [fishing_rod] into \the [src] [with_bait].</span>", \
 			"<span class='notice'>You cast \the [fishing_rod] into \the [src] [with_bait].</span>")
 
-		if (!do_after(user, TIME_TO_FISH, target = src, extra_checks = CALLBACK(src, .proc/bait_consistent, fishing_rod, bait)))
+		fishing = user
+		var/fished = do_after(user, TIME_TO_FISH, target = src, extra_checks = CALLBACK(src, .proc/bait_consistent, fishing_rod, bait))
+		fishing = null
+
+		if (!fished)
 			return
 
 		var/list/weighted = list()
