@@ -44,7 +44,6 @@
 
 	consume(user)
 
-	// TODO: Maybe force consume if there's something on it?
 	var/list/choices = list()
 	var/list/recipes = list()
 
@@ -60,7 +59,7 @@
 		choices[recipe.name] = recipe_image
 		recipes[recipe.name] = recipe
 
-	var/pick = show_radial_menu(user, src, choices)
+	var/pick = show_radial_menu(user, src, choices, custom_check = CALLBACK(src, .proc/adjacent_check, user))
 
 	var/datum/frost_moth_loom_recipe/recipe = recipes[pick]
 	if (!istype(recipe))
@@ -172,6 +171,9 @@
 	M.mind.grab_ghost()
 	to_chat(M, "<b>You have returned from death, ready to serve alongside your tribe once more.</b>")
 	playsound(get_turf(M), 'sound/magic/exit_blood.ogg', 100, TRUE)
+
+/obj/structure/icemoon/frost_moth/proc/adjacent_check(mob/user)
+	return user.Adjacent(src)
 
 /// A recipe the frost moth's loom can craft
 /datum/frost_moth_loom_recipe
