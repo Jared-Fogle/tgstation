@@ -91,7 +91,7 @@
 
 /obj/structure/sink/ice_fishing_pond/attackby(obj/item/O, mob/living/user)
 	if (fishing)
-		to_chat(user, "<span class='warning'>[fishing == user ? "You" : "[fishing]"] is already fishing here.</span>")
+		to_chat(user, "<span class='warning'>[fishing == user ? "You are" : "[fishing] is"] already fishing here.</span>")
 		return
 
 	var/obj/item/fishing_rod/fishing_rod = O
