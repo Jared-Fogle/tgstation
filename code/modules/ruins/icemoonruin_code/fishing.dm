@@ -16,6 +16,10 @@
 	inhand_icon_state = "nullrod"
 
 	var/obj/item/bait
+	var/static/list/blacklisted_bait = list(
+		/obj/item/reagent_containers/food/snacks/meat/rawfish,
+		/obj/item/reagent_containers/food/snacks/meat/fish
+	)
 
 /obj/item/fishing_rod/examine(mob/user)
 	. = ..()
@@ -33,6 +37,11 @@
 	var/obj/item/reagent_containers/food/snacks/meat/meat = W
 	if (!istype(meat))
 		to_chat(user, "<span class='warning'>You don't think the fish will be interested in [W].</span>")
+		return
+
+	// If fish meat could be used as bait, it would be far too easy
+	if (meat.type in blacklisted_bait)
+		to_chat(user, "<span class='warning'>TODO: can't use fish meat for bait</span>")
 		return
 
 	if (!user.transferItemToLoc(W, src))
@@ -142,6 +151,29 @@
 		var/obj/ore = new type(loc, rand(2, 3))
 		user.visible_message("<span class='notice'>[user] caught some [ore.name]!</span>", \
 			"<span class='notice'>You caught some [ore.name]!</span>")
+		break
+
+/// Meat butchered from fish
+/obj/item/reagent_containers/food/snacks/meat/rawfish
+	name = "raw fish meat"
+	desc = "A pile of raw fish meat."
+	icon_state = "crabmeatraw"
+	cooked_type = /obj/item/reagent_containers/food/snacks/meat/fish
+	bitesize = 3
+	list_reagents = list(/datum/reagent/consumable/nutriment = 1, /datum/reagent/consumable/cooking_oil = 3)
+	filling_color = "#79d0ea"
+	tastes = list("raw fish" = 1)
+	foodtype = RAW | MEAT
+
+/obj/item/reagent_containers/food/snacks/meat/fish
+	name = "fish meat"
+	desc = "Some deliciously cooked fish meat."
+	icon_state = "crabmeat"
+	list_reagents = list(/datum/reagent/consumable/nutriment = 2)
+	bonus_reagents = list(/datum/reagent/consumable/nutriment = 3, /datum/reagent/consumable/nutriment/vitamin = 2, /datum/reagent/consumable/cooking_oil = 2)
+	filling_color = "#DFB73A"
+	tastes = list("fish" = 1)
+	foodtype = MEAT
 
 /// Fish that can be received from the ice fishing pond
 /// If adding a new one, it needs to be added to the pool (heh) of items in /obj/structure/sink/ice_fishing_pond/Initialize()
@@ -157,7 +189,7 @@
 
 /obj/item/fish/Initialize()
 	. = ..()
-	butcher_results = list(/obj/item/reagent_containers/food/snacks/meat/rawcrab = 1)
+	butcher_results = list(/obj/item/reagent_containers/food/snacks/meat/rawfish = 1)
 
 	// TODO: Remove once sprites are added
 	if (icon_state == null)
@@ -295,7 +327,7 @@
 	butcher_results = list()
 	var/num_loot
 
-	switch(rand(1, 7))
+	switch (rand(1, 7))
 		if (1)
 			num_loot = 4
 		if (2 to 3)
