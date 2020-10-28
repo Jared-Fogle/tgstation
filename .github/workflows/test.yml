@@ -19,4 +19,5 @@ jobs:
       - name: Install Build Tools
         run: |
           bash tools/ci/install_spaceman_dmm.sh dreamchecker
+          pip3 install setuptools
           pip3 install -r tools/mapmerge2/requirements.txt
