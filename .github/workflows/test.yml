@@ -73,6 +73,7 @@ jobs:
           mysql -u root -proot tg_ci_prefixed < SQL/tgstation_schema_prefixed.sql
       - name: Compile and run tests
         run: |
+          python3 tools/ci/template_dm_generator.py
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
           bash tools/ci/dm.sh -DCIBUILDING -DCITESTING -DALL_MAPS tgstation.dme
