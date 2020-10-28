@@ -18,9 +18,9 @@ jobs:
           key: ${{ runner.os }}-spacemandmm
       - name: Install Build Tools
         run: |
+          pip3 install setuptools
           bash tools/ci/install_build_tools.sh
           bash tools/ci/install_spaceman_dmm.sh dreamchecker
-          pip3 install setuptools
           pip3 install -r tools/mapmerge2/requirements.txt
       - name: Run Linters
         run: |
