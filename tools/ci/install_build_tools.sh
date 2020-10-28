@@ -11,4 +11,4 @@ npm install --global yarn
 pip3 install --user PyYaml
 pip3 install --user beautifulsoup4
 
-$PHPENV_ROOT/phpenv global $PHP_VERSION
+${PHPENV_ROOT}/phpenv global $PHP_VERSION
