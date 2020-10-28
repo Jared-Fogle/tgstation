@@ -19,6 +19,7 @@ jobs:
       - name: Install Tools
         run: |
           curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash
+          export PHPENV_ROOT="/home/runner/.phpenv"
           pip3 install setuptools
           bash tools/ci/install_build_tools.sh
           bash tools/ci/install_spaceman_dmm.sh dreamchecker
