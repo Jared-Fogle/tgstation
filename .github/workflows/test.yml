@@ -97,4 +97,4 @@ jobs:
       - name: Deploy artifact
         uses: actions/upload-artifact@v2
         with:
-          path: deploy/deploy.zip
+          path: deploy.zip
