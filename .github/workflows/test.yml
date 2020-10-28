@@ -81,5 +81,5 @@ jobs:
         run: |
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-          bash tools/ci/dm.sh -DUNIT_TESTS -DALL_MAPS tgstation.dme
+          bash tools/ci/dm.sh -DCIBUILDING tgstation.dme
           bash tools/ci/run_server.sh
