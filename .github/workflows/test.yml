@@ -66,6 +66,7 @@ jobs:
           key: ${{ runner.os }}-byond
       - name: Setup database
         run: |
+          sudo systemctl start mysql
           mysql -u root -e 'CREATE DATABASE tg_ci;'
           mysql -u root tg_ci < SQL/tgstation_schema.sql
           mysql -u root -e 'CREATE DATABASE tg_ci_prefixed;'
