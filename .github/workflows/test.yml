@@ -79,8 +79,7 @@ jobs:
           bash tools/ci/install_rust_g.sh
       - name: Compile and run tests
         run: |
-          python3 tools/ci/template_dm_generator.py
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-          bash tools/ci/dm.sh -DCIBUILDING -DCITESTING -DALL_MAPS tgstation.dme
+          bash tools/ci/dm.sh -DUNIT_TESTS -DALL_MAPS tgstation.dme
           bash tools/ci/run_server.sh
