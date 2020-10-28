@@ -41,9 +41,9 @@ jobs:
         with:
           path: $HOME/BYOND
           key: ${{ runner.os }}-byond
-      - name: Install BYOND
+      - name: Compile All Maps
         run: |
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-      - run: python3 tools/ci/template_dm_generator.py
-      - run: bash tools/ci/dm.sh -DTRAVISBUILDING -DTRAVISTESTING -DALL_MAPS tgstation.dme
+          python3 tools/ci/template_dm_generator.py
+          bash tools/ci/dm.sh -DTRAVISBUILDING -DTRAVISTESTING -DALL_MAPS tgstation.dme
