@@ -83,3 +83,18 @@ jobs:
           source $HOME/BYOND/byond/bin/byondsetup
           bash tools/ci/dm.sh -DCIBUILDING tgstation.dme
           bash tools/ci/run_server.sh
+  test_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile
+        run: pwsh tools/ci/build.ps1
+      - name: Create artifact
+        run: |
+          md deploy
+          bash tools/deploy.sh ./deploy
+          [System.IO.Compression.ZipFile]::CreateFromDirectory('./deploy', './deploy.zip')
+      - name: Deploy artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: deploy/deploy.zip
