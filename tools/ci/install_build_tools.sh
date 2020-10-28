@@ -10,9 +10,3 @@ npm install --global yarn
 
 pip3 install --user PyYaml
 pip3 install --user beautifulsoup4
-
-curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash
-export PHPENV_ROOT="/home/runner/.phpenv"
-export PATH="${PHPENV_ROOT}/bin:${PATH}"
-eval "$(phpenv init -)"
-phpenv global $PHP_VERSION
