@@ -69,17 +69,11 @@ then
 		retval=1 #hard fail, due to warnings or errors
 	fi
 else
-	if hash DreamMaker 2>/dev/null
+	$HOME/BYOND/byond/bin/DreamMaker -max_errors 0 $dmepath.mdme 2>&1 | tee result.log
+	retval=$?
+	if ! grep '\- 0 errors, 0 warnings' result.log
 	then
-		DreamMaker -max_errors 0 $dmepath.mdme 2>&1 | tee result.log
-		retval=$?
-		if ! grep '\- 0 errors, 0 warnings' result.log
-		then
-			retval=1 #hard fail, due to warnings or errors
-		fi
-	else
-		echo "Couldn't find the DreamMaker executable, aborting."
-		exit 3
+		retval=1 #hard fail, due to warnings or errors
 	fi
 fi
 
