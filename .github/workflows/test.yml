@@ -72,7 +72,9 @@ jobs:
           mysql -u root -proot -e 'CREATE DATABASE tg_ci_prefixed;'
           mysql -u root -proot tg_ci_prefixed < SQL/tgstation_schema_prefixed.sql
       - name: Install rust-g
-        run: bash tools/ci/install_rust_g.sh
+        run: |
+          sudo apt install libssl1.1
+          bash tools/ci/install_rust_g.sh
       - name: Compile and run tests
         run: |
           python3 tools/ci/template_dm_generator.py
