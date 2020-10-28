@@ -50,8 +50,7 @@ jobs:
   run_all_tests:
     runs-on: ubuntu-latest
     services:
-      mariadb:
-        image: mariadb:latest
+      mysql:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
