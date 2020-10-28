@@ -7,7 +7,7 @@ on:
     branches:
     - master
 jobs:
-  test_linux:
+  run_linters:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,3 +32,18 @@ jobs:
           bash tools/ci/check_grep.sh
           python3 tools/mapmerge2/dmi.py --test
           ~/dreamchecker
+  compile_all_maps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME/BYOND
+          key: ${{ runner.os }}-byond
+      - name: Install BYOND
+        run: |
+          bash tools/ci/install_byond.sh
+          source $HOME/BYOND/byond/bin/byondsetup
+      - run: tools/ci/template_dm_generator.py
+      - run: tools/ci/dm.sh -DTRAVISBUILDING -DTRAVISTESTING -DALL_MAPS tgstation.dme
