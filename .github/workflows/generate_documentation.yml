@@ -18,7 +18,7 @@ jobs:
           path: $HOME/SpacemanDMM
           key: ${{ runner.os }}-spacemandmm
       - name: Install SpacemanDMM
-        run: bash tools/ci/install_spaceman_dmm.sh dreamchecker
+        run: bash tools/ci/install_spaceman_dmm.sh dmdoc
       - name: Generate documentation
         run: |
           ~/dmdoc
