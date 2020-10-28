@@ -71,11 +71,12 @@ jobs:
           mysql -u root -proot tg_ci < SQL/tgstation_schema.sql
           mysql -u root -proot -e 'CREATE DATABASE tg_ci_prefixed;'
           mysql -u root -proot tg_ci_prefixed < SQL/tgstation_schema_prefixed.sql
+      - name: Install rust-g
+        run: bash tools/ci/install_rust_g.sh
       - name: Compile and run tests
         run: |
           python3 tools/ci/template_dm_generator.py
           bash tools/ci/install_byond.sh
-          bash tools/ci/install_rust_g.sh
           source $HOME/BYOND/byond/bin/byondsetup
           bash tools/ci/dm.sh -DCIBUILDING -DCITESTING -DALL_MAPS tgstation.dme
           bash tools/ci/run_server.sh
