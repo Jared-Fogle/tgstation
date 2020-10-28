@@ -52,6 +52,8 @@ jobs:
     services:
       mysql:
         image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -65,10 +67,10 @@ jobs:
       - name: Setup database
         run: |
           sudo systemctl start mysql
-          mysql -u root -proot -e 'CREATE DATABASE tg_ci;'
-          mysql -u root -proot tg_ci < SQL/tgstation_schema.sql
-          mysql -u root -proot -e 'CREATE DATABASE tg_ci_prefixed;'
-          mysql -u root -proot tg_ci_prefixed < SQL/tgstation_schema_prefixed.sql
+          mysql -u root -p root -e 'CREATE DATABASE tg_ci;'
+          mysql -u root -p root tg_ci < SQL/tgstation_schema.sql
+          mysql -u root -p root -e 'CREATE DATABASE tg_ci_prefixed;'
+          mysql -u root -p root tg_ci_prefixed < SQL/tgstation_schema_prefixed.sql
       - name: Compile and run tests
         run: |
           bash tools/ci/install_byond.sh
