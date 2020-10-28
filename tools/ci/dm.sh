@@ -71,7 +71,7 @@ then
 else
 	echo "PATH $PATH"
 	echo "DreamMaker $(which DreamMaker)"
-	if hash DreamMaker 2>/dev/null
+	if which DreamMaker 2>/dev/null
 	then
 		DreamMaker -max_errors 0 $dmepath.mdme 2>&1 | tee result.log
 		retval=$?
