@@ -3,10 +3,6 @@ on:
   push:
     branches:
     - master
-  pull_request:
-    # REMOVE THIS WHEN IT WORKS!!!
-    branches:
-    - master
 jobs:
   generate_documentation:
     runs-on: ubuntu-latest
