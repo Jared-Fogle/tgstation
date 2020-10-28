@@ -93,8 +93,8 @@ jobs:
         run: |
           md deploy
           bash tools/deploy.sh ./deploy
-          [System.IO.Compression.ZipFile]::CreateFromDirectory('./deploy', './deploy.zip')
       - name: Deploy artifact
         uses: actions/upload-artifact@v2
         with:
-          path: deploy.zip
+          name: deploy
+          path: deploy
