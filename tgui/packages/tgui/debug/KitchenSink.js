@@ -6,7 +6,7 @@
 
 import { Fragment } from 'inferno';
 import { useBackend, useLocalState } from '../backend';
-import { Blink, BlockQuote, Box, Button, ByondUi, Collapsible, DraggableControl, Flex, Icon, InfinitePlane, Input, Knob, LabeledList, NoticeBox, NumberInput, ProgressBar, Section, Slider, Tabs, Tooltip } from '../components';
+import { Blink, BlockQuote, Box, Button, ByondUi, Collapsible, Draggable, DraggableControl, Flex, Icon, InfinitePlane, Input, Knob, LabeledList, NoticeBox, NumberInput, ProgressBar, Section, Slider, Tabs, Tooltip } from '../components';
 import { formatSiUnit } from '../format';
 import { Pane, Window } from '../layouts';
 import { createLogger } from '../logging';
@@ -692,12 +692,16 @@ const KitchenSinkStorage = (props, context) => {
 const KitchenSinkInfinitePlane = () => {
   return (
     <Section title="InfinitePlane">
-      <InfinitePlane style={{
-        background: "red",
-        height: "350px",
-        width: "350px",
-      }}>
-        <Box>Hello, world!</Box>
+      <InfinitePlane
+        style={{
+          background: "red",
+          height: "350px",
+          width: "350px",
+        }}
+      >
+        <Draggable>
+          <Button content="Drag me!" />
+        </Draggable>
       </InfinitePlane>
     </Section>
   );

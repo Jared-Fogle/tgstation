@@ -1,3 +1,4 @@
+import { clamp } from "common/math";
 import { computeBoxProps } from "./Box";
 import { Component } from "inferno";
 
@@ -87,10 +88,11 @@ export class InfinitePlane extends Component {
   onMouseMove(event) {
     if (this.state.mouseDown) {
       this.setState((state) => {
+        const bounds = this.props.bounds || Infinity;
         return {
-          left: event.clientX - state.lastLeft,
-          top: event.clientY - state.lastTop,
-        }
+          left: clamp(event.clientX - state.lastLeft, -bounds, bounds),
+          top: clamp(event.clientY - state.lastTop, -bounds, bounds),
+        };
       });
     }
   }
@@ -103,9 +105,11 @@ export class InfinitePlane extends Component {
 
   render() {
     const {
+      bounds,
       children,
       ...rest
     } = this.props;
+
     const {
       left,
       top,
@@ -129,6 +133,7 @@ export class InfinitePlane extends Component {
         onMouseMove={this.onMouseMove}
 
         style={{
+          overflow: "hidden",
           position: "absolute",
 
           height: "100%",
@@ -139,7 +144,7 @@ export class InfinitePlane extends Component {
 
       <div style={{
         "background": "green",
-        "display": "inlineBlock",
+        "display": "inline-block",
 
         "pointer-events": "none",
         "position": "relative",
@@ -149,9 +154,6 @@ export class InfinitePlane extends Component {
         "width": "100%",
       }}>
         {children}
-        left: {left}
-        top: {top}
-        zoom: {zoom}
       </div>
 
       <ZoomSlider
