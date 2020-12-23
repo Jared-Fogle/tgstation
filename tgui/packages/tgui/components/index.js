@@ -5,6 +5,7 @@
  */
 
 export { AnimatedNumber } from './AnimatedNumber';
+export { BezierCurves } from './BezierCurves';
 export { Blink } from './Blink';
 export { BlockQuote } from './BlockQuote';
 export { Box } from './Box';

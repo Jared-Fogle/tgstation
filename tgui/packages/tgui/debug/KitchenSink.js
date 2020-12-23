@@ -6,7 +6,7 @@
 
 import { Fragment } from 'inferno';
 import { useBackend, useLocalState } from '../backend';
-import { Blink, BlockQuote, Box, Button, ByondUi, Collapsible, Draggable, DraggableControl, Flex, Icon, InfinitePlane, Input, Knob, LabeledList, NoticeBox, NumberInput, ProgressBar, Section, Slider, Tabs, Tooltip } from '../components';
+import { BezierCurves, Blink, BlockQuote, Box, Button, ByondUi, Collapsible, Draggable, DraggableControl, Flex, Icon, InfinitePlane, Input, Knob, LabeledList, NoticeBox, NumberInput, ProgressBar, Section, Slider, Tabs, Tooltip } from '../components';
 import { formatSiUnit } from '../format';
 import { Pane, Window } from '../layouts';
 import { createLogger } from '../logging';
@@ -92,6 +92,10 @@ const PAGES = [
   {
     title: 'InfinitePlane',
     component: () => KitchenSinkInfinitePlane,
+  },
+  {
+    title: 'BezierCurves',
+    component: () => KitchenSinkBezierCurves,
   },
 ];
 
@@ -706,3 +710,45 @@ const KitchenSinkInfinitePlane = () => {
     </Section>
   );
 };
+
+const KitchenSinkBezierCurves = (props, context) => {
+  const [pointA_x, setPointA_x] = useLocalState(context, "pointA_x", 0);
+  const [pointA_y, setPointA_y] = useLocalState(context, "pointA_y", 0);
+
+  const [pointB_x, setPointB_x] = useLocalState(context, "pointB_x", 100);
+  const [pointB_y, setPointB_y] = useLocalState(context, "pointB_y", 100);
+
+  return (
+    <Section title="BezierCurves">
+      <NumberInput value={pointA_x} onDrag={(e, value) => setPointA_x(value)} />
+      <NumberInput value={pointA_y} onDrag={(e, value) => setPointA_y(value)} />
+      <NumberInput value={pointB_x} onDrag={(e, value) => setPointB_x(value)} />
+      <NumberInput value={pointB_y} onDrag={(e, value) => setPointB_y(value)} />
+
+      <Box>
+        <BezierCurves curves={[
+          {
+            "stroke": "red",
+            "stroke-width": "2",
+            "pointA": [pointA_x, pointA_y],
+            "pointB": [pointB_x, pointB_y],
+          },
+        ]} />
+
+        <Icon
+          name="bug"
+          style={{
+            "transform": `translate(${pointA_x}px, ${pointA_y}px)`,
+          }}
+        />
+
+        <Icon
+          name="spider"
+          style={{
+            "transform": `translate(${pointB_x}px, ${pointB_y}px)`,
+          }}
+        />
+      </Box>
+    </Section>
+  );
+}

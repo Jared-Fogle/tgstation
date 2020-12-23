@@ -43,10 +43,16 @@ export class Draggable extends Component {
   onMouseMove(event) {
     if (this.state.mouseDown) {
       this.setState((state) => {
-        return {
+        const newPosition = {
           left: event.clientX - state.lastLeft,
           top: event.clientY - state.lastTop,
         };
+
+        if (this.props.onMove !== undefined) {
+          this.props.onMove(newPosition);
+        }
+
+        return newPosition;
       });
     }
   }
@@ -82,7 +88,7 @@ export class Draggable extends Component {
           "overflow": "hidden",
           "pointer-events": "all", // TODO: This isn't necessary, use SCSS to make InfinitePlane's children have pointer-events: all instead
           "position": "relative",
-          transform: `translate(${left}px, ${top}px)`,
+          "transform": `translate(${left}px, ${top}px)`,
         },
       })}
     >
