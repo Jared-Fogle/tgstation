@@ -13,6 +13,7 @@
 	mob_biotypes = MOB_ORGANIC|MOB_HUMANOID
 	blocks_emissive = EMISSIVE_BLOCK_UNIQUE
 	can_be_shoved_into = TRUE
+	screentip_subtext = "Left-click - Punch | Right-click - ERP"
 
 	//Hair colour and style
 	var/hair_color = "000"

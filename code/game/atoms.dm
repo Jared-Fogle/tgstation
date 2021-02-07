@@ -149,6 +149,12 @@
 	///AI controller that controls this atom. type on init, then turned into an instance during runtime
 	var/datum/ai_controller/ai_controller
 
+	/// Subtext for screentips
+	var/screentip_subtext
+
+	/// Should this atom show a screentip?
+	var/shows_screentips = TRUE
+
 /**
  * Called when an atom is created in byond (built in engine proc)
  *
