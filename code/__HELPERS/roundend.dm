@@ -221,6 +221,7 @@
 		if(!C.credits)
 			C.RollCredits()
 		C.playtitlemusic(40)
+		C?.tgui_panel?.send_roundrestart()
 		if(speed_round)
 			C.give_award(/datum/award/achievement/misc/speed_round, C.mob)
 		HandleRandomHardcoreScore(C)
