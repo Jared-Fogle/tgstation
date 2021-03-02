@@ -702,6 +702,8 @@
 		updatehealth()
 		get_up(TRUE)
 
+	RemoveElement(/datum/element/remarkable/corpse)
+
 
 /mob/living/proc/remove_CC()
 	SetStun(0)

@@ -267,6 +267,9 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 */
 #define TRAIT_DONUT_LOVER "donut_lover"
 
+/// This mob cares about seeing dead things, and will receive ambience when examining a corpse
+#define TRAIT_CARES_ABOUT_DEATH "cares_about_death"
+
 // METABOLISMS
 // Various jobs on the station have historically had better reactions
 // to various drinks and foodstuffs. Security liking donuts is a classic
