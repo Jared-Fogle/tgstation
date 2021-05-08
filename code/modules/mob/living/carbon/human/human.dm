@@ -19,9 +19,13 @@
 	. = ..()
 
 	RegisterSignal(src, COMSIG_COMPONENT_CLEAN_FACE_ACT, .proc/clean_face)
+	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_IGNOREDAMAGESLOWDOWN), .proc/on_ignore_damage_slowdown_added)
+	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_IGNOREDAMAGESLOWDOWN), .proc/on_ignore_damage_slowdown_removed)
+
 	AddComponent(/datum/component/personal_crafting)
 	AddComponent(/datum/component/footstep, FOOTSTEP_MOB_HUMAN, 1, -6)
 	AddComponent(/datum/component/bloodysoles/feet)
+	AddElement(/datum/element/damage_slowdown)
 	AddElement(/datum/element/ridable, /datum/component/riding/creature/human)
 	AddElement(/datum/element/strippable, GLOB.strippable_human_items, /mob/living/carbon/human/.proc/should_strip)
 	GLOB.human_list += src
@@ -983,17 +987,6 @@
 /mob/living/carbon/human/updatehealth()
 	. = ..()
 	dna?.species.spec_updatehealth(src)
-	if(HAS_TRAIT(src, TRAIT_IGNOREDAMAGESLOWDOWN))
-		remove_movespeed_modifier(/datum/movespeed_modifier/damage_slowdown)
-		remove_movespeed_modifier(/datum/movespeed_modifier/damage_slowdown_flying)
-		return
-	var/health_deficiency = max((maxHealth - health), staminaloss)
-	if(health_deficiency >= 40)
-		add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/damage_slowdown, TRUE, multiplicative_slowdown = health_deficiency / 75)
-		add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/damage_slowdown_flying, TRUE, multiplicative_slowdown = health_deficiency / 25)
-	else
-		remove_movespeed_modifier(/datum/movespeed_modifier/damage_slowdown)
-		remove_movespeed_modifier(/datum/movespeed_modifier/damage_slowdown_flying)
 
 /mob/living/carbon/human/adjust_nutrition(change) //Honestly FUCK the oldcoders for putting nutrition on /mob someone else can move it up because holy hell I'd have to fix SO many typechecks
 	if(HAS_TRAIT(src, TRAIT_NOHUNGER))
@@ -1014,6 +1007,14 @@
 	if(NOBLOOD in dna.species.species_traits)
 		return FALSE
 	return ..()
+
+/mob/living/carbon/human/proc/on_ignore_damage_slowdown_added()
+	SIGNAL_HANDLER
+	RemoveElement(/datum/element/damage_slowdown)
+
+/mob/living/carbon/human/proc/on_ignore_damage_slowdown_removed()
+	SIGNAL_HANDLER
+	AddElement(/datum/element/damage_slowdown)
 
 /mob/living/carbon/human/monkeybrain
 	ai_controller = /datum/ai_controller/monkey

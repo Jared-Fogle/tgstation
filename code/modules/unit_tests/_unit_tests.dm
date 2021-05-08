@@ -88,6 +88,7 @@
 #include "surgeries.dm"
 #include "teleporters.dm"
 #include "timer_sanity.dm"
+#include "toggle_component_trait.dm"
 #include "unit_test.dm"
 
 #ifdef REFERENCE_TRACKING //Don't try and parse this file if ref tracking isn't turned on. IE: don't parse ref tracking please mr linter

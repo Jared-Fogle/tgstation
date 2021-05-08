@@ -6,6 +6,7 @@
 	ADD_TRAIT(src, TRAIT_CAN_STRIP, INNATE_TRAIT)
 
 	wires = new /datum/wires/robot(src)
+	AddElement(/datum/element/damage_slowdown)
 	AddElement(/datum/element/empprotection, EMP_PROTECT_WIRES)
 	AddElement(/datum/element/ridable, /datum/component/riding/creature/cyborg)
 	RegisterSignal(src, COMSIG_PROCESS_BORGCHARGER_OCCUPANT, .proc/charge)

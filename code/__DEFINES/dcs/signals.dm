@@ -556,6 +556,10 @@
 ///from base of mob/living/death(): (gibbed)
 #define COMSIG_LIVING_DEATH "living_death"
 
+/// From base of /mob/living/set_health(old_health).
+/// Performed after health has been set, and only if it changed.
+#define COMSIG_LIVING_HEALTH_SET "living_health_set"
+
 ///sent from borg recharge stations: (amount, repairs)
 #define COMSIG_PROCESS_BORGCHARGER_OCCUPANT "living_charge"
 ///sent from borg mobs to itself, for tools to catch an upcoming destroy() due to safe decon (rather than detonation)

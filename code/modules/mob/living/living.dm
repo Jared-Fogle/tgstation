@@ -624,7 +624,8 @@
 /mob/living/proc/set_health(new_value)
 	. = health
 	health = new_value
-
+	if (. != new_value)
+		SEND_SIGNAL(src, COMSIG_LIVING_HEALTH_SET, .)
 
 /mob/living/proc/updatehealth()
 	if(status_flags & GODMODE)
