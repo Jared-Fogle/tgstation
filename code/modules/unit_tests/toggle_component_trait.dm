@@ -55,17 +55,17 @@
 		/datum/element/toggle_component_trait, \
 		TRAIT_TEST, \
 		TOGGLE_COMPONENT_TRAIT_INVERSE, \
-		/datum/element/mock_element, \
-		TRAIT_HAS_MOCK_ELEMENT, \
+		/datum/component/mock_component, \
+		100, \
 	)
 
-	TEST_ASSERT(HAS_TRAIT(thing, TRAIT_HAS_MOCK_ELEMENT), "Element was not added without trait")
+	TEST_ASSERT(!isnull(thing.GetComponent(/datum/component/mock_component)), "Component was not added without trait")
 
 	ADD_TRAIT(thing, TRAIT_TEST, TRAIT_SOURCE_UNIT_TESTS)
-	TEST_ASSERT(!HAS_TRAIT(thing, TRAIT_HAS_MOCK_ELEMENT), "Element was not removed when trait was added")
+	TEST_ASSERT(isnull(thing.GetComponent(/datum/component/mock_component)), "Component was not removed when trait was added")
 
 	REMOVE_TRAIT(thing, TRAIT_TEST, TRAIT_SOURCE_UNIT_TESTS)
-	TEST_ASSERT(HAS_TRAIT(thing, TRAIT_HAS_MOCK_ELEMENT), "Element was not added when trait was removed")
+	TEST_ASSERT(!isnull(thing.GetComponent(/datum/component/mock_component)), "Component was not added when trait was removed")
 
 /datum/component/mock_component
 	var/argument
