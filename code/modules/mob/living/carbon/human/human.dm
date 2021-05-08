@@ -19,13 +19,17 @@
 	. = ..()
 
 	RegisterSignal(src, COMSIG_COMPONENT_CLEAN_FACE_ACT, .proc/clean_face)
-	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_IGNOREDAMAGESLOWDOWN), .proc/on_ignore_damage_slowdown_added)
-	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_IGNOREDAMAGESLOWDOWN), .proc/on_ignore_damage_slowdown_removed)
+
+	AddElement( \
+		/datum/element/toggle_component_trait, \
+		TRAIT_IGNOREDAMAGESLOWDOWN, \
+		TOGGLE_COMPONENT_TRAIT_INVERSE, \
+		/datum/element/damage_slowdown, \
+	)
 
 	AddComponent(/datum/component/personal_crafting)
 	AddComponent(/datum/component/footstep, FOOTSTEP_MOB_HUMAN, 1, -6)
 	AddComponent(/datum/component/bloodysoles/feet)
-	AddElement(/datum/element/damage_slowdown)
 	AddElement(/datum/element/ridable, /datum/component/riding/creature/human)
 	AddElement(/datum/element/strippable, GLOB.strippable_human_items, /mob/living/carbon/human/.proc/should_strip)
 	GLOB.human_list += src
@@ -1007,14 +1011,6 @@
 	if(NOBLOOD in dna.species.species_traits)
 		return FALSE
 	return ..()
-
-/mob/living/carbon/human/proc/on_ignore_damage_slowdown_added()
-	SIGNAL_HANDLER
-	RemoveElement(/datum/element/damage_slowdown)
-
-/mob/living/carbon/human/proc/on_ignore_damage_slowdown_removed()
-	SIGNAL_HANDLER
-	AddElement(/datum/element/damage_slowdown)
 
 /mob/living/carbon/human/monkeybrain
 	ai_controller = /datum/ai_controller/monkey

@@ -7,7 +7,7 @@
 	var/trait_to_watch
 
 	/// If this is TRUE, then we'll only have this component if we DON'T have `trait_to_watch`.
-	var/inverse = FALSE
+	var/inverse = TOGGLE_COMPONENT_TRAIT_DIRECT
 
 	/// The component type to add.
 	var/component_type
@@ -62,6 +62,7 @@
 		remove_component(target)
 
 /datum/element/toggle_component_trait/proc/add_component(datum/target)
+	log_world("ADD: [target]")
 	if (ispath(component_type, /datum/component))
 		target._AddComponent(arguments.Copy())
 	else if (ispath(component_type, /datum/element))
@@ -70,9 +71,10 @@
 		CRASH("invalid path: [component_type]")
 
 /datum/element/toggle_component_trait/proc/remove_component(datum/target)
+	log_world("REMOVE: [target]")
 	if (ispath(component_type, /datum/component))
 		qdel(target.GetComponent(component_type))
 	else if (ispath(component_type, /datum/element))
-		target._RemoveElement(arguments.Copy())
+		// target._RemoveElement(arguments.Copy())
 	else
 		CRASH("invalid path: [component_type]")
